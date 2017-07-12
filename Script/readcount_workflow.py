@@ -44,6 +44,7 @@ def align_sam(index, path):
     # -p 2                  Number of cores to use for alignment
     p = subprocess.Popen(['bowtie', '-t', '-S', '-p 2', index, path],
                          stdout=subprocess.PIPE)
+    # remove binary b produced by subprocess.Popen
     for line in p.stdout:
         ln = line.decode('ascii')
         handle.write(ln)
@@ -61,6 +62,7 @@ def sort_bam(bam_file_path):
     sorted_bam = bam_file_path.replace(".bam", "_sorted")
     p = subprocess.Popen(['samtools', 'sort', bam_file_path, sorted_bam],
                          stdout=subprocess.PIPE)
+    # remove binary b produced by subprocess.Popen
     for line in p.stdout:
         ln = line.decode('ascii')
         print(ln)
@@ -83,6 +85,7 @@ def remove_unmapped(sorted_bam_path):
     # -o                 Designates output name
     p = subprocess.Popen(['samtools', 'view', '-b', '-F 0x904', '-o',
                           mapped_sorted_bam, sorted_bam_path], stdout=subprocess.PIPE)
+    # remove binary b produced by subprocess.Popen    
     for line in p.stdout:
         ln = line.decode('ascii')
         print(ln)
