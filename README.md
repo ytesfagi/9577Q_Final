@@ -125,7 +125,7 @@ Bcl6 | NM_009744.4
 
 **Step 7:** The final step that I need to do is write out the dictionary so that I had an output with my produced table. To do this I had to first create a file that would locate me in my current directory. Next I had to set my output to write to that fie, and output a header that would help readers understand what was in each column, and then the key and values produced from my dictionary. While this was running my screen was set to print "Writing out the dictionary". 
 
-NOTE: The output for this file needs to be renamed everytime you run a different sample.
+**NOTE:** The output for this file needs to be renamed everytime you run a different sample.
 This is what is meant by this script here. 
 For example when running HA1.fastq you may want to add:
 
@@ -133,4 +133,13 @@ For example when running HA1.fastq you may want to add:
 # Need to change the csv output file name to match sample name
 gene_file[-1] = 'HA1_gene_counts.csv'
 gene_file = "/".join(gene_file)
+```
+
+## What was produced
+From this whole script what you were able to do was count the number of times the gene of interest Accession ID could be mapped and aligned to the reference genome. From this data you can then go on to compare what your outputs were from different files. You can even try to determine the the variance between samples from the same group using the rest of the data this RNAseq experiment produced.  
+
+The data where my fastq files were pulled from can be found here: 
+```
+[High Affinty] (https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR2558581) 
+[Low Affinity] (https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR2558584)
 ```
