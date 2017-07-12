@@ -124,3 +124,14 @@ Bach2 | NM_001109661.1
 Bcl6 | NM_009744.4
 
 **Step 7:** The final step that I need to do is write out the dictionary so that I had an output with my produced table. To do this I had to first create a file that would locate me in my current directory. Next I had to set my output to write to that fie, and output a header that would help readers understand what was in each column, and then the key and values produced from my dictionary. While this was running my screen was set to print "Writing out the dictionary". 
+
+```
+*NOTE: The output for this file needs to be renamed everytime you run a different sample.*
+This is what is meant by this script here. 
+For example when running HA1.fastq you may want to add
+```
+# Need to change the csv output file name to match sample name
+gene_file[-1] = 'HA1_gene_counts.csv'
+gene_file = "/".join(gene_file)
+```
+```
