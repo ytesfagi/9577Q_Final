@@ -79,41 +79,35 @@ The reference index created will have the leading string 'GRCm38.p5' with '.1.eb
 ## Explaning readcount_workflow.py - Determining reads of interest genes
 I then created my reads of intrest readcount_workflow. The goal was to map my two different samples of high and low affinity murine B cells to the mouse genome, and determine which genes related to germinal center (GC) B cell development were being expressed. I had a total of 7 steps that I applied to my sample fastq files one at a time, and my reference genome. I implemented the sys module in order to call those two files by defining a sample as the argument 1 and the reference genome to index as argument 2 repectively. 
 
-```
+```python
    sample_file = sys.argv[1]
    ref_index = sys.argv[2]
-
-   NOTE: ref_index is where you are defining your argument to the reference genome created. 
-   AGAIN remember, you need to only specify the name you outputted as your bowtie build 
-   - in this case 'GRCm38.p5'. 
-```
-
-**Step 1:** This function was created to align my two fastq files to the reference genome. To do that I called the bowtie function by importing subprocess. I set up the script so that when this first function was called, the screen would print out "Aligning fastq file to reference genome..." If the script crashed this would allow you to see it was during this *align_sam* function. 
 ```
 NOTE: 
-  Bowtie will allow you to multithread, meaning you can use more then one processor. 
-  I only have two processors available for my Ubuntu so I therefore set my -p to 2. 
-  If more are available it would be beneficial to change this so that the output could be produced faster. 
+  ref_index is where you are defining your argument to the reference genome created. 
+  AGAIN remember, you need to only specify the name you outputted as your bowtie build (in this case 'GRCm38.p5'.) 
+
+
+**Step 1:** This function was created to align my two fastq files to the reference genome. To do that I called the bowtie function by importing subprocess. I set up the script so that when this first function was called, the screen would print out "Aligning fastq file to reference genome..." If the script crashed this would allow you to see it was during this *align_sam* function. 
+
+NOTE: 
+  Bowtie will allow you to multithread, meaning you can use more then one processor. I only have two processors available for my Ubuntu so I therefore set my *-p* to **2**.   If more are available it would be beneficial to change this so that the output could be produced faster. This is the first function used that will require that you import subprocess as we are calling out to bowtie. 
   
-  This is the first function used that will require that you import subprocess as we are calling out to bowtie. 
-```
   
 **Step 2:** Next I had to convert my file from sam to bam format in order to utilize the sort command. Samtools is able to do this so again I called out to samtools through subprocess. I made sure to pipline my aligned sam output from my *align_sam* function created from the first step as the input for this function. The script was created to print out "Converting sam to bam file..." while this function is running. If the script crashed this again would allow you to see it was during this *sam2bam* function. 
 
-**Step 3 :** After a bam file was generated I was then able to utilize the samtools sort function in order to sort my bam file according to the query template name (QNAME, in Col 1). So I piped the *sam2bam* output and inputted it into my *sort_bam* function. The script was created to print out "Sorting bam file..." so again you would know if there was a problem with this step. 
-```
-This was a tricky one to figure out since the bowtie sort function adds in the .bam extension on its own. 
-To by pass this you had to make sure that when you called the input from this function in step 4 you called it 
-    (+ ".bam"). 
 
-This was the benefit of having the print comments appear. 
-I was able to see that my file was looking for a *sorted_bam_file* 
-while my actual file outputted was called *sorted_bam_file.bam*
-```
+**Step 3 :** After a bam file was generated I was then able to utilize the samtools sort function in order to sort my bam file according to the query template name (QNAME, in Col 1). So I piped the *sam2bam* output and inputted it into my *sort_bam* function. The script was created to print out "Sorting bam file..." so again you would know if there was a problem with this step. 
+
+NOTE:
+  This was a tricky one to figure out since the bowtie sort function adds in the .bam extension on its own. To by pass this you had to make sure that when you called the input from this function in step 4 you called it **(+ ".bam")**. This was the benefit of having the print comments appear. I was able to see that my file was looking for a *sorted_bam_file* while my actual file outputted was called *sorted_bam_file.bam*
+
 
 **Step 4 :** Next I wanted to filter out all the unmapped reads, secondary and supplementary alignments. This would leave you with only mapped, primary aligned reads. So i piped my output from *sort_bam* and inputted it into my *remove_unmapped* function. The screen would print, "Removing unmapped reads, secondary alignments and supplemental alignments from the bam files..." so you know this was the function that was currently running. 
 
+
 **Step 5 :** To be able to understand and look at your mapped and aligned sequences you have to convert the bam file back to sam. Again I utilized samtools and piped the output from my mapped sorted bam file that was created from the *remove_unmapped* function and inputted that into this *bam2sam* function. The screen was set to print "Converting back to sam..." while this occured. 
+
 
 **Step 6 :** Finally I wanted to determine the read counts for particular genes of interest. To do this first I had to look up the Accession ID of my genes of interest. Next I created a dictionary  which contained the Accession ID of my genes of interest as the key, and then set the value of each key to be 0. 
 
@@ -133,13 +127,14 @@ Blimp1 | NM_007548.4
 Bach2 | NM_001109661.1 
 Bcl6 | NM_009744.4
 
+
 **Step 7:** The final step that I need to do is write out the dictionary so that I had an output with my produced table. To do this I had to first create a file that would locate me in my current directory. Next I had to set my output to write to that fie, and output a header that would help readers understand what was in each column, and then the key and values produced from my dictionary. While this was running my screen was set to print "Writing out the dictionary". 
 
-**NOTE:** The output for this file needs to be renamed everytime you run a different sample.
+**NOTE IMPORTANT:** The output for this file needs to be renamed everytime you run a different sample.
 This is what is meant by this script here. 
 For example when running HA1.fastq you may want to add:
 
-```
+```python
 # Need to change the csv output file name to match sample name
 gene_file[-1] = 'HA1_gene_counts.csv'
 gene_file = "/".join(gene_file)
@@ -149,9 +144,7 @@ gene_file = "/".join(gene_file)
 From this whole script what you were able to do was count the number of times the gene of interest Accession ID could be mapped and aligned to the reference genome. From this data you can then go on to compare what your outputs were from different files. You can even try to determine the the variance between samples from the same group using the rest of the data this RNAseq experiment produced.  
 
 The data where my fastq files were pulled from can be found here: 
-```
 [High Affinty] (https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR2558581) 
 [Low Affinity] (https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR2558584)
-```
 
 Nevertheless, for the purposes of this final all I aimed to do was generate the reads counts from a mapped and aligned fastq file, for particular genes of interest.
