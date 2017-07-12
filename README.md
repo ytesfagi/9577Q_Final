@@ -83,22 +83,32 @@ I then created my reads of intrest readcount_workflow. The goal was to map my tw
    sample_file = sys.argv[1]
    ref_index = sys.argv[2]
 
-   NOTE: ref_index is where you are defining your argument to the reference genome created. AGAIN remember, you need to only specify the name you outputted as your bowtie build (in this case 'GRCm38.p5'). 
+   NOTE: ref_index is where you are defining your argument to the reference genome created. 
+   AGAIN remember, you need to only specify the name you outputted as your bowtie build 
+   - in this case 'GRCm38.p5'. 
 ```
 
 **Step 1:** This function was created to align my two fastq files to the reference genome. To do that I called the bowtie function by importing subprocess. I set up the script so that when this first function was called, the screen would print out "Aligning fastq file to reference genome..." If the script crashed this would allow you to see it was during this *align_sam* function. 
 ```
 NOTE: 
-  - This is the first function used that will require that you import subprocess as we are calling out to bowtie. 
-  - Bowtie will allow you to multithread, meaning you can use more then one processor. I only have two processors available for my Ubuntu so I therefore set my *-p* to **2**. If more are available it would be beneficial to change this so that the output could be produced faster. 
+  Bowtie will allow you to multithread, meaning you can use more then one processor. 
+  I only have two processors available for my Ubuntu so I therefore set my -p to 2. 
+  If more are available it would be beneficial to change this so that the output could be produced faster. 
+  
+  This is the first function used that will require that you import subprocess as we are calling out to bowtie. 
 ```
   
-**Step 2:** Next I had to convert my file from sam to bam format in order to utilize the sort command. Samtools is able to do this so again I called out to samtools through subprocess. I made sure to pipline my aligned sam output from my *align_sam* function created from the first step as the input for this function. The script was created to print out "Converting sam to bam file..." while this function is running. If the script crashed this again would allow you to see it was during this sam2bam function. 
+**Step 2:** Next I had to convert my file from sam to bam format in order to utilize the sort command. Samtools is able to do this so again I called out to samtools through subprocess. I made sure to pipline my aligned sam output from my *align_sam* function created from the first step as the input for this function. The script was created to print out "Converting sam to bam file..." while this function is running. If the script crashed this again would allow you to see it was during this *sam2bam* function. 
 
 **Step 3 :** After a bam file was generated I was then able to utilize the samtools sort function in order to sort my bam file according to the query template name (QNAME, in Col 1). So I piped the *sam2bam* output and inputted it into my *sort_bam* function. The script was created to print out "Sorting bam file..." so again you would know if there was a problem with this step. 
 ```
-This was a tricky one to figure out since the bowtie sort function adds in the .bam extension on its own. To by pass this you had to make sure that when you called the input from this function in step 4 you called it (+ ".bam"). 
-This was the benefit of having the print comments appear, since I was able to see that my file was looking for a *sorted_bam_file* but my file was actually called *sorted_bam_file.bam*
+This was a tricky one to figure out since the bowtie sort function adds in the .bam extension on its own. 
+To by pass this you had to make sure that when you called the input from this function in step 4 you called it 
+    (+ ".bam"). 
+
+This was the benefit of having the print comments appear. 
+I was able to see that my file was looking for a *sorted_bam_file* 
+while my actual file outputted was called *sorted_bam_file.bam*
 ```
 
 **Step 4 :** Next I wanted to filter out all the unmapped reads, secondary and supplementary alignments. This would leave you with only mapped, primary aligned reads. So i piped my output from *sort_bam* and inputted it into my *remove_unmapped* function. The screen would print, "Removing unmapped reads, secondary alignments and supplemental alignments from the bam files..." so you know this was the function that was currently running. 
