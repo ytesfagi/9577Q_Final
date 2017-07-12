@@ -80,6 +80,7 @@ The reference index created will have the leading string 'GRCm38.p5' with '.1.eb
 I then created my reads of intrest readcount_workflow. The goal was to map my two different samples of high and low affinity murine B cells to the mouse genome, and determine which genes related to germinal center (GC) B cell development were being expressed. I had a total of 7 steps that I applied to my sample fastq files one at a time, and my reference genome. I implemented the sys module in order to call those two files by defining a sample as the argument 1 and the reference genome to index as argument 2 repectively. 
 
 ```python
+   # Set up arguments
    sample_file = sys.argv[1]
    ref_index = sys.argv[2]
 ```
