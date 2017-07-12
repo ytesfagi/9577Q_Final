@@ -143,3 +143,5 @@ The data where my fastq files were pulled from can be found here:
 [High Affinty] (https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR2558581) 
 [Low Affinity] (https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR2558584)
 ```
+
+Nevertheless, for the purposes of this final all I aimed to do was generate the reads counts from a mapped and aligned fastq file, for particular genes of interest.
